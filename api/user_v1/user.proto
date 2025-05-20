@@ -5,7 +5,7 @@ package user_v1;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "/home/dak/Programming/auth-service/pkg/user_v1;user_v1";
+option go_package = "https://github.com/CapitanSize/auth-service/pkg/user_v1;user_v1";
 
 service UserV1 {
   rpc Create (CreateRequest) returns (CreateResponse) {}
