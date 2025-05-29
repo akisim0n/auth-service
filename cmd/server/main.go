@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	user "github.com/akisim0n/auth-service/pkg/user_v1"
+	"github.com/akisim0n/auth-service/cmd/server/pkg/user_v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,13 +14,13 @@ import (
 const port = 50051
 
 type userServer struct {
-	user.UnimplementedUserV1Server
+	user_v1.UnimplementedUserV1Server
 }
 
-func (server *userServer) Get(ctx context.Context, request *user.GetRequest) (*user.GetResponse, error) {
+func (server *userServer) Get(ctx context.Context, request *user_v1.GetRequest) (*user_v1.GetResponse, error) {
 	log.Printf("Received: %v", request.GetId())
 
-	retInfo := &user.GetResponse{
+	retInfo := &user_v1.GetResponse{
 		Id:        request.GetId(),
 		Name:      "DAK",
 		Email:     "D@AK.com",
@@ -39,7 +39,7 @@ func main() {
 
 	server := grpc.NewServer()
 	reflection.Register(server)
-	user.RegisterUserV1Server(server, &userServer{})
+	user_v1.RegisterUserV1Server(server, &userServer{})
 
 	log.Printf("server listening at %v", lis.Addr())
 
