@@ -1,4 +1,4 @@
-module github.com/akisim0n/auth-service
+module github.com/akisim0n/auth-service/cmd
 
 go 1.23.0
 
