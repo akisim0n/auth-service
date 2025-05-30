@@ -1,2 +1,4 @@
 .idea
 bin
+database/postgres/.env
+cmd/server/.env

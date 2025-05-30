@@ -3,47 +3,45 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/akisim0n/auth-service/cmd/server/database"
 	"github.com/akisim0n/auth-service/cmd/server/pkg/user_v1"
+	"github.com/akisim0n/auth-service/cmd/server/repository"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"net"
 )
 
 const port = 50051
 
-type userServer struct {
-	user_v1.UnimplementedUserV1Server
-}
-
-func (server *userServer) Get(ctx context.Context, request *user_v1.GetRequest) (*user_v1.GetResponse, error) {
-	log.Printf("Received: %v", request.GetId())
-
-	retInfo := &user_v1.GetResponse{
-		Id:        request.GetId(),
-		Name:      "DAK",
-		Email:     "D@AK.com",
-		CreatedAt: timestamppb.Now(),
-		UpdatedAt: timestamppb.Now(),
-	}
-
-	return retInfo, nil
-}
-
 func main() {
+
+	ctx := context.Background()
+
 	lis, lesErr := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if lesErr != nil {
 		log.Fatalf("failed to listen: %v", lesErr)
 	}
 
+	dbPool, err := database.Connect(ctx)
+	if err != nil {
+		log.Fatalf("failed to connect database: %v", err)
+	}
+	defer dbPool.Close()
+
+	if pingErr := dbPool.Ping(ctx); pingErr != nil {
+		log.Fatalf("failed to ping database: %v", pingErr)
+	}
+
+	repo := repository.NewUserRepository(dbPool)
+
 	server := grpc.NewServer()
 	reflection.Register(server)
-	user_v1.RegisterUserV1Server(server, &userServer{})
+	user_v1.RegisterUserV1Server(server, repo)
 
 	log.Printf("server listening at %v", lis.Addr())
 
-	if err := server.Serve(lis); err != nil {
+	if err = server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }

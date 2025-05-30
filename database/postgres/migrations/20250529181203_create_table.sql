@@ -5,11 +5,17 @@ create table users (
     name text not null,
     email text not null,
     password text not null,
-    role
+    role int references roles(id)
+);
+
+create table roles (
+    id serial primary key,
+    code varchar(32) not null,
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+drop table users;
+drop table roles;
 -- +goose StatementEnd
