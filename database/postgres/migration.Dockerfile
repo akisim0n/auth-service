@@ -1,4 +1,4 @@
-FROM alpine:3.21.3
+FROM alpine:3.21
 
 RUN apk update && \
     apk upgrade && \
@@ -12,7 +12,6 @@ WORKDIR /root
 
 ADD migrations/*.sql migrations/
 ADD migration.sh .
-ADD .env .
 
 RUN chmod +x migration.sh
 

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
 	"os"
 )
 
@@ -19,16 +18,12 @@ func newConfig(config string) *Config {
 
 func Connect(ctx context.Context) (*pgxpool.Pool, error) {
 
-	if envErr := godotenv.Load(); envErr != nil {
-		return nil, errors.New(fmt.Sprintf("Error loading .env file: %v", envErr))
-	}
-
-	config := newConfig(fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	config := newConfig(fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable",
 		getEnv("PG_DB_HOST"),
-		getEnv("PG_PORT"),
+		getEnv("PG_PORT_OUT"),
+		getEnv("PG_DB_NAME"),
 		getEnv("PG_USER"),
-		getEnv("PG_PASSWORD"),
-		getEnv("PG_DB_NAME")))
+		getEnv("PG_PASSWORD")))
 
 	dbPool, err := pgxpool.New(ctx, config.DSN)
 	if err != nil {

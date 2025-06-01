@@ -1,11 +1,14 @@
 -- +goose Up
 -- +goose StatementBegin
-insert into roles values (
-    'admin',
+insert into roles(code) values
+    (
+    'admin'
+    ),
+    (
     'user'
-);
+    );
 
-insert into users values (
+insert into users(name,email,password,role) values (
     'Daniil',
     'dak@gmail.com',
     'Egalam47',

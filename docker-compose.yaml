@@ -1,0 +1,25 @@
+volumes:
+  auth-service-volume:
+
+services:
+  pg:
+    image: postgres:17.5-alpine3.21
+    hostname: ${PG_DB_HOST}
+    volumes:
+      - auth-service-volume:/home/dak/Programming/databases/postgres/auth-service-temp
+    environment:
+      - "POSTGRES_DB=${PG_DB_NAME}"
+      - "POSTGRES_USER=${PG_USER}"
+      - "POSTGRES_PASSWORD=${PG_PASSWORD}"
+    ports:
+      - "${PG_PORT_OUT}:${PG_PORT_IN}"
+
+  migrator:
+    build:
+      dockerfile: migration.Dockerfile
+      context: database/postgres
+    restart: on-failure
+    environment:
+      DB_HOST: ${PG_DB_HOST}
+    env_file:
+      - .env
