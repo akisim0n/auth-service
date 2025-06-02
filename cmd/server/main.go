@@ -3,47 +3,49 @@ package main
 import (
 	"context"
 	"fmt"
-	user "github.com/akisim0n/auth-service/pkg/user_v1"
+	"github.com/akisim0n/auth-service/cmd/server/database"
+	"github.com/akisim0n/auth-service/cmd/server/pkg/user_v1"
+	"github.com/akisim0n/auth-service/cmd/server/repository"
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"net"
+	"os"
 )
 
-const port = 50051
+func main() {
 
-type userServer struct {
-	user.UnimplementedUserV1Server
-}
-
-func (server *userServer) Get(ctx context.Context, request *user.GetRequest) (*user.GetResponse, error) {
-	log.Printf("Received: %v", request.GetId())
-
-	retInfo := &user.GetResponse{
-		Id:        request.GetId(),
-		Name:      "DAK",
-		Email:     "D@AK.com",
-		CreatedAt: timestamppb.Now(),
-		UpdatedAt: timestamppb.Now(),
+	if envErr := godotenv.Load(); envErr != nil {
+		log.Fatalf("Error loading .env file: %v", envErr)
 	}
 
-	return retInfo, nil
-}
+	ctx := context.Background()
 
-func main() {
-	lis, lesErr := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	lis, lesErr := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 	if lesErr != nil {
 		log.Fatalf("failed to listen: %v", lesErr)
 	}
 
+	dbPool, err := database.Connect(ctx)
+	if err != nil {
+		log.Fatalf("failed to connect database: %v", err)
+	}
+
+	if pingErr := dbPool.Ping(ctx); pingErr != nil {
+		log.Fatalf("failed to ping database: %v", pingErr)
+	}
+	defer dbPool.Close()
+
+	repo := repository.NewUserRepository(dbPool)
+
 	server := grpc.NewServer()
 	reflection.Register(server)
-	user.RegisterUserV1Server(server, &userServer{})
+	user_v1.RegisterUserV1Server(server, repo)
 
 	log.Printf("server listening at %v", lis.Addr())
 
-	if err := server.Serve(lis); err != nil {
+	if err = server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }
