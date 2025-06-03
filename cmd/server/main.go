@@ -6,7 +6,6 @@ import (
 	"github.com/akisim0n/auth-service/cmd/server/database"
 	"github.com/akisim0n/auth-service/cmd/server/pkg/user_v1"
 	"github.com/akisim0n/auth-service/cmd/server/repository"
-	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -16,13 +15,9 @@ import (
 
 func main() {
 
-	if envErr := godotenv.Load(); envErr != nil {
-		log.Fatalf("Error loading .env file: %v", envErr)
-	}
-
 	ctx := context.Background()
 
-	lis, lesErr := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
+	lis, lesErr := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("SERVER_PORT_OUT")))
 	if lesErr != nil {
 		log.Fatalf("failed to listen: %v", lesErr)
 	}

@@ -20,7 +20,7 @@ func Connect(ctx context.Context) (*pgxpool.Pool, error) {
 
 	config := newConfig(fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable",
 		getEnv("PG_DB_HOST"),
-		getEnv("PG_PORT_OUT"),
+		getEnv("PG_PORT_IN"),
 		getEnv("PG_DB_NAME"),
 		getEnv("PG_USER"),
 		getEnv("PG_PASSWORD")))

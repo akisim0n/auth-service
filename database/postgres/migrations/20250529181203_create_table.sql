@@ -10,7 +10,9 @@ create table users (
     name text not null,
     email text not null,
     password text not null,
-    role integer references roles(id)
+    role_id integer references roles(id),
+    created_at timestamp default now(),
+    updated_at timestamp
 );
 -- +goose StatementEnd
 

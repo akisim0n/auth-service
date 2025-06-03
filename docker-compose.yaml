@@ -13,6 +13,8 @@ services:
       - "POSTGRES_PASSWORD=${PG_PASSWORD}"
     ports:
       - "${PG_PORT_OUT}:${PG_PORT_IN}"
+    networks:
+      local-network:
 
   migrator:
     build:
@@ -23,3 +25,20 @@ services:
       DB_HOST: ${PG_DB_HOST}
     env_file:
       - .env
+    networks:
+      local-network:
+
+  server:
+    build:
+      context: cmd
+      dockerfile: server.Dockerfile
+    ports:
+      - "${SERVER_PORT_OUT}:${SERVER_PORT_IN}"
+    networks:
+      local-network:
+    restart: on-failure
+    env_file:
+      - .env
+
+networks:
+  local-network:

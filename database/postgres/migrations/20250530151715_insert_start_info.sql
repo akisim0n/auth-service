@@ -8,7 +8,7 @@ insert into roles(code) values
     'user'
     );
 
-insert into users(name,email,password,role) values (
+insert into users(name,email,password,role_id) values (
     'Daniil',
     'dak@gmail.com',
     'Egalam47',
