@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/akisim0n/auth-service/cmd/server/database"
 	"github.com/akisim0n/auth-service/cmd/server/pkg/user_v1"
-	"github.com/akisim0n/auth-service/cmd/server/repository"
+	"github.com/akisim0n/auth-service/cmd/server/repository/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -32,7 +32,7 @@ func main() {
 	}
 	defer dbPool.Close()
 
-	repo := repository.NewUserRepository(dbPool)
+	repo := user.NewUserRepository(dbPool)
 
 	server := grpc.NewServer()
 	reflection.Register(server)
