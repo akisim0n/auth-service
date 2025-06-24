@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/akisim0n/auth-service/cmd/server/database"
 	"github.com/akisim0n/auth-service/cmd/server/pkg/user_v1"
-	"github.com/akisim0n/auth-service/cmd/server/repository/user"
+	userRepo "github.com/akisim0n/auth-service/cmd/server/repository/user"
+	userServ "github.com/akisim0n/auth-service/cmd/server/service/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -32,11 +33,12 @@ func main() {
 	}
 	defer dbPool.Close()
 
-	repo := user.NewUserRepository(dbPool)
+	repo := userRepo.NewUserRepository(dbPool)
+	service := userServ.NewService(repo)
 
 	server := grpc.NewServer()
 	reflection.Register(server)
-	user_v1.RegisterUserV1Server(server, repo)
+	user_v1.RegisterUserV1Server(server, service)
 
 	log.Printf("server listening at %v", lis.Addr())
 

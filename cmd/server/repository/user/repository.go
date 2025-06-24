@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 	sq "github.com/Masterminds/squirrel"
+	"github.com/akisim0n/auth-service/cmd/server/models"
 	user "github.com/akisim0n/auth-service/cmd/server/pkg/user_v1"
 	"github.com/akisim0n/auth-service/cmd/server/repository"
 	"github.com/akisim0n/auth-service/cmd/server/repository/user/converter"
 	repoModel "github.com/akisim0n/auth-service/cmd/server/repository/user/models"
-	servModel "github.com/akisim0n/auth-service/cmd/server/service/user/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -29,7 +29,7 @@ func NewUserRepository(db *pgxpool.Pool) repository.UserRepository {
 	}
 }
 
-func (r *repo) Get(ctx context.Context, id int64) (*servModel.User, error) {
+func (r *repo) Get(ctx context.Context, id int64) (*models.User, error) {
 
 	selectBuilder := sq.Select("id", "name", "email", "role_id", "created_at", "coalesce(updated_at, now()) as updated_at").
 		PlaceholderFormat(sq.Dollar).
@@ -57,7 +57,7 @@ func (r *repo) Get(ctx context.Context, id int64) (*servModel.User, error) {
 	return converter.FromRepoToUser(&newUser), nil
 }
 
-func (r *repo) Create(ctx context.Context, data *servModel.UserData) (int64, error) {
+func (r *repo) Create(ctx context.Context, data *models.UserData) (int64, error) {
 
 	/*	hashPassword, err := bcrypt.GenerateFromPassword([]byte(request.GetPassword()), bcrypt.DefaultCost)
 		switch {
@@ -98,7 +98,7 @@ func (r *repo) Create(ctx context.Context, data *servModel.UserData) (int64, err
 	return retId, nil
 }
 
-func (r *repo) Update(ctx context.Context, data *servModel.User) error {
+func (r *repo) Update(ctx context.Context, data *models.User) error {
 
 	updateBuilder := sq.Update(tableName).
 		PlaceholderFormat(sq.Dollar).

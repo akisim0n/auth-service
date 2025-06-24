@@ -1,8 +1,8 @@
 package converter
 
 import (
+	servModel "github.com/akisim0n/auth-service/cmd/server/models"
 	repoModel "github.com/akisim0n/auth-service/cmd/server/repository/user/models"
-	servModel "github.com/akisim0n/auth-service/cmd/server/service/user/models"
 )
 
 func FromRepoToUser(user *repoModel.User) *servModel.User {

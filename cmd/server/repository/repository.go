@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"github.com/akisim0n/auth-service/cmd/server/service/user/models"
+	"github.com/akisim0n/auth-service/cmd/server/models"
 )
 
 type UserRepository interface {
