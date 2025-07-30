@@ -6,5 +6,10 @@ import (
 )
 
 func (s *serv) Get(ctx context.Context, id int64) (*models.User, error) {
-	return nil, nil
+	user, err := s.userRepo.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

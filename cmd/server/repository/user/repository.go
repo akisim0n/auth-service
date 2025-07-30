@@ -6,7 +6,6 @@ import (
 	"fmt"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/akisim0n/auth-service/cmd/server/models"
-	user "github.com/akisim0n/auth-service/cmd/server/pkg/user_v1"
 	"github.com/akisim0n/auth-service/cmd/server/repository"
 	"github.com/akisim0n/auth-service/cmd/server/repository/user/converter"
 	repoModel "github.com/akisim0n/auth-service/cmd/server/repository/user/models"
@@ -19,7 +18,6 @@ const (
 )
 
 type repo struct {
-	user.UnimplementedUserV1Server
 	DBPool *pgxpool.Pool
 }
 
@@ -98,18 +96,18 @@ func (r *repo) Create(ctx context.Context, data *models.UserData) (int64, error)
 	return retId, nil
 }
 
-func (r *repo) Update(ctx context.Context, data *models.User) error {
+func (r *repo) Update(ctx context.Context, id int64, data *models.UserData) error {
 
 	updateBuilder := sq.Update(tableName).
 		PlaceholderFormat(sq.Dollar).
-		Set("name", data.Data.Name).
-		Set("surname", data.Data.Surname).
-		Set("email", data.Data.Email).
-		Set("age", data.Data.Age).
-		Set("role_id", data.Data.Role).
-		Set("password", data.Data.Password).
+		Set("name", data.Name).
+		Set("surname", data.Surname).
+		Set("email", data.Email).
+		Set("age", data.Age).
+		Set("role_id", data.Role).
+		Set("password", data.Password).
 		Set("updated_at", timestamppb.Now()).
-		Where(sq.Eq{"id": data.Id})
+		Where(sq.Eq{"id": id})
 
 	query, args, err := updateBuilder.ToSql()
 	if err != nil {

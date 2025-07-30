@@ -6,5 +6,11 @@ import (
 )
 
 func (s *serv) Create(ctx context.Context, data *models.UserData) (int64, error) {
-	return nil, nil
+
+	id, err := s.userRepo.Create(ctx, data)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }

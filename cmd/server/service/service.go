@@ -8,6 +8,6 @@ import (
 type UserService interface {
 	Create(ctx context.Context, data *models.UserData) (int64, error)
 	Get(ctx context.Context, id int64) (*models.User, error)
-	Update(ctx context.Context, data *models.User) error
+	Update(ctx context.Context, id int64, data *models.UserData) error
 	Delete(ctx context.Context, id int64) error
 }
